@@ -47,7 +47,7 @@ export class Validador {
     const config = myArgs[configIndex + 1];
     const operations = config.split('-').filter(Boolean);
 
-    operations.map(operation => this.operations.known.includes(operation)
+    operations.map(operation => this.operations.knownArr.includes(operation)
       ? operation
       : this.humanFriendly.exit(`An error occurred: An unknown encode/decode operation ${operation} was entered.`));
 
