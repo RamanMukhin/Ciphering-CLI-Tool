@@ -1,12 +1,14 @@
 
 import { Validador } from './src/validator.js'
 import * as fs from 'fs';
-import { pipeline } from 'stream';
-import { CustomTransformStream } from './src/transformStream.js';
 import { HumanFriendly } from './src/human-friendly-message.js';
+import { CustomTransformStream } from './src/streams/transformStream.js';
+import { CustomWriteablemStream } from './src/streams/writeableStream.js';
+import { pipeline } from 'stream';
 
 class App {
   constructor() {
+    this.args = process.argv.slice(2);
     this.validador = new Validador();
     this.humanFriendly = new HumanFriendly();
   }
@@ -29,26 +31,16 @@ class App {
 
   }
 
-  createWriteableStream() {
-    let writeableStream;
-    const myArgs = process.argv.slice(2);
-
-    if (!myArgs.includes('-o') && !myArgs.includes('--output')) {
-      return writeableStream = process.stdout;
-    } else if (myArgs.includes('-o')) {
-      const outputIndex = myArgs.indexOf('-o');
-      const outputPath = myArgs[outputIndex + 1];
-      return writeableStream = fs.createWriteStream(outputPath, { flags: 'a' });
-    } else {
-      const outputIndex = myArgs.indexOf('--output');
-      const outputPath = myArgs[outputIndex + 1];
-      return writeableStream = fs.createWriteStream(outputPath, { flags: 'a' });
-    }
-
-  }
-
   createTransformStream() {
     return new CustomTransformStream();
+  }
+
+  createWriteableStream() {
+    return (!this.args.includes('-o') && !this.args.includes('--output'))
+      ? process.stdout
+      : (this.args.includes('-o'))
+        ? new CustomWriteablemStream(this.args[this.args.indexOf('-o') + 1])
+        : new CustomWriteablemStream(this.args[this.args.indexOf('--output') + 1]);
   }
 
   createPipeline() {
@@ -56,13 +48,9 @@ class App {
       this.createReadableStream(),
       this.createTransformStream(),
       this.createWriteableStream(),
-      (err) => {
-        if (err) {
-          this.humanFriendly.exit(`Program failed. Error is:   ${err.message}`);
-        } else {
-          console.log('Program succeeded!');
-        }
-      }
+      err => err
+        ? this.humanFriendly.exit(`Program failed. Error is:   ${err.message}`)
+        : console.log('Program succeeded!')
     );
   }
 
