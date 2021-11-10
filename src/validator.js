@@ -1,6 +1,8 @@
 import { HumanFriendly } from "./human-friendly-message.js";
 import { Operations } from "./operations.js";
 import { Options } from "./options.js";
+import { access } from 'fs/promises';
+import { constants } from 'fs';
 
 export class Validador {
   constructor() {
@@ -54,7 +56,60 @@ export class Validador {
     return this;
   }
 
-  end() {
-    console.log('The END!!!')
+  async checkInput() {
+    const myArgs = process.argv.slice(2);
+
+    if (!myArgs.includes('-i') && !myArgs.includes('--input')) {
+      return;
+    } else if (myArgs.includes('-i')) {
+      const inputIndex = myArgs.indexOf('-i');
+      const inputPath = myArgs[inputIndex + 1];
+      try {
+        await access(inputPath, constants.R_OK);
+      } catch {
+        this.humanFriendly.exit('An error occurred: the path to the "input" file was not transferred or there is no access to it.');
+      }
+    } else {
+      const inputIndex = myArgs.indexOf('--input');
+      const inputPath = myArgs[inputIndex + 1];
+      try {
+        await access(inputPath, constants.R_OK);
+      } catch {
+        this.humanFriendly.exit('An error occurred: the path to the "input" file was not transferred or there is no access to it.');
+      }
+    }
   }
+
+  async checkOutput() {
+    const myArgs = process.argv.slice(2);
+
+    if (!myArgs.includes('-o') && !myArgs.includes('--output')) {
+      return;
+    } else if (myArgs.includes('-o')) {
+      const outputIndex = myArgs.indexOf('-o');
+      const outputPath = myArgs[outputIndex + 1];
+      try {
+        await access(outputPath, constants.W_OK);
+      } catch {
+        this.humanFriendly.exit('An error occurred: the path to the "output" file was not transferred or there is no access to it.')
+      }
+    } else {
+      const outputIndex = myArgs.indexOf('--output');
+      const outputPath = myArgs[outputIndex + 1];
+      try {
+        await access(outputPath, constants.W_OK);
+      } catch {
+        this.humanFriendly.exit('An error occurred: the path to the "output" file was not transferred or there is no access to it.')
+      }
+    }
+  }
+
+  async validate() {
+    this
+      .checkOptions()
+      .checkConfig();
+    await this.checkInput();
+    await this.checkOutput();
+  }
+
 }

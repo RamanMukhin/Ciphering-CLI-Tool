@@ -37,11 +37,11 @@ class App {
     } else if (myArgs.includes('-o')) {
       const outputIndex = myArgs.indexOf('-o');
       const outputPath = myArgs[outputIndex + 1];
-      return writeableStream = fs.createWriteStream(outputPath);
+      return writeableStream = fs.createWriteStream(outputPath, { flags: 'a' });
     } else {
       const outputIndex = myArgs.indexOf('--output');
       const outputPath = myArgs[outputIndex + 1];
-      return writeableStream = fs.createWriteStream(outputPath);
+      return writeableStream = fs.createWriteStream(outputPath, { flags: 'a' });
     }
 
   }
@@ -61,12 +61,8 @@ class App {
     return config.split('-').filter(Boolean);
   }
 
-  start() {
-    this.validador
-      .checkOptions()
-      .checkConfig()
-      .end();
-
+  async start() {
+    await this.validador.validate();
     this.createReadableStream().pipe(this.createTransformStream(this.caesar.encode)).pipe(this.createWriteableStream());
   }
 
