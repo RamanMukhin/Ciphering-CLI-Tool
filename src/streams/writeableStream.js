@@ -7,7 +7,7 @@ export class CustomWriteablemStream extends Writable {
     this.filename = filename;
   }
 
-  async _write(chunk, _encoding, callback) {
+  _write(chunk, _encoding, callback) {
     try {
       writeFile(this.filename, `\n${chunk}`, { flag: 'a' }, err => err);
       callback();

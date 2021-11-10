@@ -1,7 +1,7 @@
 
 import { Validador } from './src/middlewares/validator.js'
-import * as fs from 'fs';
 import { HumanFriendly } from './src/middlewares/human-friendly-message.js';
+import { CustomReadablemStream } from './src/streams/readableStream.js';
 import { CustomTransformStream } from './src/streams/transformStream.js';
 import { CustomWriteablemStream } from './src/streams/writeableStream.js';
 import { pipeline } from 'stream';
@@ -14,21 +14,11 @@ class App {
   }
 
   createReadableStream() {
-    let readableStream;
-    const myArgs = process.argv.slice(2);
-
-    if (!myArgs.includes('-i') && !myArgs.includes('--input')) {
-      return readableStream = process.stdin;
-    } else if (myArgs.includes('-i')) {
-      const inputIndex = myArgs.indexOf('-i');
-      const inputPath = myArgs[inputIndex + 1];
-      return readableStream = fs.createReadStream(inputPath, 'utf8');
-    } else {
-      const inputIndex = myArgs.indexOf('--input');
-      const inputPath = myArgs[inputIndex + 1];
-      return readableStream = fs.createReadStream(inputPath, 'utf8');
-    }
-
+    return (!this.args.includes('-i') && !this.args.includes('--input'))
+      ? process.stdin
+      : (this.args.includes('-i'))
+        ? new CustomReadablemStream(this.args[this.args.indexOf('-i') + 1])
+        : new CustomReadablemStream(this.args[this.args.indexOf('--input') + 1]);
   }
 
   createTransformStream() {
