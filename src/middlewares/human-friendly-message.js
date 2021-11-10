@@ -1,4 +1,4 @@
-import { CustomError } from "./customError.js";
+import { CustomError } from "../common/customError.js";
 
 export class HumanFriendly {
   exit(message) {

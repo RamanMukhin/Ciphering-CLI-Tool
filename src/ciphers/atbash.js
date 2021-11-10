@@ -1,4 +1,4 @@
-import { AtbashKey } from "./atbashKey.js";
+import { AtbashKey } from "./keys/atbashKey.js";
 
 export class Atbash {
     constructor() {

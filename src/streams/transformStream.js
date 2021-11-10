@@ -2,7 +2,7 @@ import { Transform } from 'stream';
 import { Caesar } from '../ciphers/caesar.js';
 import { Rot } from '../ciphers/rot8.js';
 import { Atbash } from '../ciphers/atbash.js';
-import { Operations } from '../operations.js';
+import { Operations } from '../constants/operations.js';
 
 export class CustomTransformStream extends Transform {
   constructor() {

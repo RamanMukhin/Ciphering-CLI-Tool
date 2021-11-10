@@ -1,7 +1,7 @@
 
-import { Validador } from './src/validator.js'
+import { Validador } from './src/middlewares/validator.js'
 import * as fs from 'fs';
-import { HumanFriendly } from './src/human-friendly-message.js';
+import { HumanFriendly } from './src/middlewares/human-friendly-message.js';
 import { CustomTransformStream } from './src/streams/transformStream.js';
 import { CustomWriteablemStream } from './src/streams/writeableStream.js';
 import { pipeline } from 'stream';

@@ -1,4 +1,4 @@
-import { Rot8Key } from "./rot8Key.js";
+import { Rot8Key } from "./keys/rot8Key.js";
 
 export class Rot {
     constructor() {

@@ -1,4 +1,4 @@
-import { CaesarKey } from "./caesarKey.js";
+import { CaesarKey } from "./keys/caesarKey.js";
 
 export class Caesar {
     constructor() {

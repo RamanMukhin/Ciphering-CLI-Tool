@@ -1,6 +1,6 @@
 import { HumanFriendly } from "./human-friendly-message.js";
-import { Operations } from "./operations.js";
-import { Options } from "./options.js";
+import { Operations } from "../constants/operations.js";
+import { Options } from "../constants/options.js";
 import { access } from 'fs/promises';
 import { constants } from 'fs';
 
