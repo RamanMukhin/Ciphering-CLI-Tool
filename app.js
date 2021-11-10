@@ -1,13 +1,14 @@
-import { Caesar } from './src/ciphers/caesar.js';
-import { Operations } from './src/operations.js';
+
 import { Validador } from './src/validator.js'
 import * as fs from 'fs';
+import { pipeline } from 'stream';
 import { CustomTransformStream } from './src/transformStream.js';
+import { HumanFriendly } from './src/human-friendly-message.js';
 
 class App {
   constructor() {
     this.validador = new Validador();
-    this.caesar = new Caesar();
+    this.humanFriendly = new HumanFriendly();
   }
 
   createReadableStream() {
@@ -46,24 +47,28 @@ class App {
 
   }
 
-  createTransformStream(func) {
-    return new CustomTransformStream(func);
+  createTransformStream() {
+    return new CustomTransformStream();
   }
 
-  getOperationsaArr() {
-    const myArgs = process.argv.slice(2);
-
-    const configIndex = myArgs.indexOf('-c') !== -1
-      ? myArgs.indexOf('-c')
-      : myArgs.indexOf('--config');
-
-    const config = myArgs[configIndex + 1];
-    return config.split('-').filter(Boolean);
+  createPipeline() {
+    pipeline(
+      this.createReadableStream(),
+      this.createTransformStream(),
+      this.createWriteableStream(),
+      (err) => {
+        if (err) {
+          this.humanFriendly.exit(`Program failed. Error is:   ${err.message}`);
+        } else {
+          console.log('Program succeeded!');
+        }
+      }
+    );
   }
 
   async start() {
     await this.validador.validate();
-    this.createReadableStream().pipe(this.createTransformStream(this.caesar.encode)).pipe(this.createWriteableStream());
+    this.createPipeline();
   }
 
 }

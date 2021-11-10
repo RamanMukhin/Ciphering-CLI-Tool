@@ -2,11 +2,11 @@ export class Operations {
   constructor() {
     this.knownArr = ['C1', 'C0', 'R1', 'R0', 'A'];
     this.knownObj = {
-      'C1': 'C1',
-      'CO': 'CO',
-      'R1': 'R1',
-      'RO': 'RO',
-      'A': 'A',
+      'caesarEncode': 'C1',
+      'caesarDecode': 'C0',
+      'rotEncode': 'R1',
+      'rotDecode': 'R0',
+      'atbash': 'A',
     }
   }
 }
