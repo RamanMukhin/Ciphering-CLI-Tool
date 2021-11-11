@@ -6,19 +6,20 @@ import { constants } from 'fs';
 
 export class Validador {
   constructor() {
+    this.args = process.argv.slice(2);
     this.options = new Options();
     this.operations = new Operations();
     this.humanFriendly = new HumanFriendly();
   }
 
   checkOptions() {
-    const myArgs = process.argv.slice(2);
+    const args = this.args;
 
-    if (!this.options.known.hasOwnProperty([myArgs[0]])) {
+    if (!this.options.known.hasOwnProperty(args[0])) {
       this.humanFriendly.exit('An error occurred: The first argument must be a known option.');
     };
 
-    for (let arg of myArgs) {
+    for (let arg of args) {
 
       if (arg.startsWith('-')) {
 
@@ -26,7 +27,7 @@ export class Validador {
           this.humanFriendly.exit(`An error occurred: Unknown command line options ${arg} entered.`);
         };
 
-        if (myArgs.indexOf(arg) !== myArgs.lastIndexOf(arg) || myArgs.indexOf(this.options.known[arg]) !== -1) {
+        if (args.indexOf(arg) !== args.lastIndexOf(arg) || args.indexOf(this.options.known[arg]) !== -1) {
           this.humanFriendly.exit('An error occurred: Command line options are being repeated.');
         };
       };
@@ -36,17 +37,17 @@ export class Validador {
   }
 
   checkConfig() {
-    const myArgs = process.argv.slice(2);
+    const args = this.args;
 
-    const configIndex = myArgs.indexOf('-c') !== -1
-      ? myArgs.indexOf('-c')
-      : myArgs.indexOf('--config');
+    const configIndex = args.indexOf('-c') !== -1
+      ? args.indexOf('-c')
+      : args.indexOf('--config');
 
     if (configIndex === -1) {
-      this.humanFriendly.exit('An error occurred: A required option -c/--config was not passed.')
+      this.humanFriendly.exit('An error occurred: A required option -c/--config was not passed.');
     };
 
-    const config = myArgs[configIndex + 1];
+    const config = args[configIndex + 1];
     const operations = config.split('-').filter(Boolean);
 
     operations.map(operation => this.operations.knownArr.includes(operation)
@@ -57,21 +58,21 @@ export class Validador {
   }
 
   async checkInput() {
-    const myArgs = process.argv.slice(2);
+    const args = this.args;
 
-    if (!myArgs.includes('-i') && !myArgs.includes('--input')) {
+    if (!args.includes('-i') && !args.includes('--input')) {
       return;
-    } else if (myArgs.includes('-i')) {
-      const inputIndex = myArgs.indexOf('-i');
-      const inputPath = myArgs[inputIndex + 1];
+    } else if (args.includes('-i')) {
+      const inputIndex = args.indexOf('-i');
+      const inputPath = args[inputIndex + 1];
       try {
         await access(inputPath, constants.R_OK);
       } catch {
         this.humanFriendly.exit('An error occurred: the path to the "input" file was not transferred or there is no access to it.');
       }
     } else {
-      const inputIndex = myArgs.indexOf('--input');
-      const inputPath = myArgs[inputIndex + 1];
+      const inputIndex = args.indexOf('--input');
+      const inputPath = args[inputIndex + 1];
       try {
         await access(inputPath, constants.R_OK);
       } catch {
@@ -81,25 +82,25 @@ export class Validador {
   }
 
   async checkOutput() {
-    const myArgs = process.argv.slice(2);
+    const args = this.args;
 
-    if (!myArgs.includes('-o') && !myArgs.includes('--output')) {
+    if (!args.includes('-o') && !args.includes('--output')) {
       return;
-    } else if (myArgs.includes('-o')) {
-      const outputIndex = myArgs.indexOf('-o');
-      const outputPath = myArgs[outputIndex + 1];
+    } else if (args.includes('-o')) {
+      const outputIndex = args.indexOf('-o');
+      const outputPath = args[outputIndex + 1];
       try {
         await access(outputPath, constants.W_OK);
       } catch {
-        this.humanFriendly.exit('An error occurred: the path to the "output" file was not transferred or there is no access to it.')
+        this.humanFriendly.exit('An error occurred: the path to the "output" file was not transferred or there is no access to it.');
       }
     } else {
-      const outputIndex = myArgs.indexOf('--output');
-      const outputPath = myArgs[outputIndex + 1];
+      const outputIndex = args.indexOf('--output');
+      const outputPath = args[outputIndex + 1];
       try {
         await access(outputPath, constants.W_OK);
       } catch {
-        this.humanFriendly.exit('An error occurred: the path to the "output" file was not transferred or there is no access to it.')
+        this.humanFriendly.exit('An error occurred: the path to the "output" file was not transferred or there is no access to it.');
       }
     }
   }
