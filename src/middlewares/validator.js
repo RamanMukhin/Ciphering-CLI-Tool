@@ -50,6 +50,10 @@ export class Validador {
     const config = args[configIndex + 1];
     const operations = config.split('-').filter(Boolean);
 
+    if (config.split('-').length - operations.length !== 0) {
+      this.humanFriendly.exit(`An error occurred: Not valide config  ${config} passed.`);
+    };
+
     operations.map(operation => this.operations.knownArr.includes(operation)
       ? operation
       : this.humanFriendly.exit(`An error occurred: An unknown encode/decode operation ${operation} was entered.`));
